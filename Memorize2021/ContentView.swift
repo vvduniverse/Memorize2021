@@ -9,62 +9,95 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let emojiSetOne = ["🚢", "⛴", "🚗", "🚌", "🛳", "🚙", "🛥", "🚕", "🚁", "🛸", "🚀", "🛰", "🚂", "🛩", "✈️", "🚇", "🚲", "🚃", "🏍", "🛺", "🚔", "🚆", "🛵", "🏎", "🚒", "🚑", "🚜", "🚛"]
+    let emojis = ["🚢", "⛴", "🚗", "🚌", "🛳", "🚙", "🛥", "🚕", "🚁", "🛸", "🚀", "🛰", "🚂", "🛩", "✈️", "🚇", "🚲", "🚃", "🏍", "🛺", "🚔", "🚆", "🛵", "🏎", "🚒", "🚑", "🚜", "🚛"]
     
-    let emojiSetTwo = ["🍏", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥒", "🌶", "🫑", "🌽", "🥕", "🫒", "🧄", "🧅", "🥔", "🌰", "🥜"]
-    
-    let emojiSetThree = ["🐶", "🐯", "🐒", "🦇", "🐞", "🐢", "🐡", "🐆", "🦒", "🦙", "🐓", "🦨", "🐱", "🐜", "🐍", "🐠", "🦓", "🦃", "🦫", "🦍", "🦎", "🪰", "🐝", "🪱", "🦋", "🐌", "🦉", "🦀", "🦆"]
-    
-    
+    @State var emojiCount = 6
     
     var body: some View {
-        VStack(alignment: .center) {
-            NavigationView {
-                TabView {
-                    Cards(emojis: emojiSetOne).tabItem { Label("Cars", systemImage: "car.2") }
-                    Cards(emojis: emojiSetTwo).tabItem { Label("Fruits", systemImage: "takeoutbag.and.cup.and.straw") }
-                    Cards(emojis: emojiSetThree).tabItem { Label("Animals", systemImage: "hare.fill") }
-                }
-                .navigationTitle("Memorize!")
-            }
-        }
-//        .padding(.horizontal)
-    }
-}
-
-struct Cards: View {
-    let emojis: [String]
-
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                ForEach(emojis.shuffled()[0...Int.random(in: 4...emojis.count)], id: \.self) { emoji in
-                    Card(emoji: emoji)
+        VStack {
+            HStack {
+                ForEach(emojis[0..<emojiCount], id: \.self) {emoji in
+                    CardView(content: emoji)
                 }
             }
             .padding(.horizontal)
+            .foregroundColor(.red)
+            Spacer(minLength: 30)
+            HStack {
+                add
+                Spacer()
+                remove
+                
+            }
+            .font(.largeTitle)
+            .padding(.horizontal)
         }
     }
-}
-
-struct Card: View {
-    let emoji: String
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .aspectRatio(2/3, contentMode:.fit)
-
-            Text(emoji)
-                .font(.title)
+    
+    var remove: some View {
+        Button {
+            if emojiCount < emojis.count {
+                emojiCount += 1
+            }
+        } label: {
+            Image(systemName: "plus.circle")
             
         }
     }
+    
+    var add: some View {
+        Button {
+            if emojiCount > 1 {
+                emojiCount -= 1
+            }
+        } label: {
+            Image(systemName: "minus.circle")
+        }
+    }
 }
+
+struct CardView: View {
+    var content: String
+    @State var isFaceUp: Bool = true
+    
+    var body: some View {
+        ZStack {
+            let shape = RoundedRectangle(cornerRadius: 20)
+            if isFaceUp {
+                shape.fill().foregroundColor(.white)
+                shape.stroke(lineWidth: 3)
+                Text(content)
+                    .font(.largeTitle)
+            } else {
+                shape.fill()
+            }
+        }
+        .onTapGesture {
+            isFaceUp.toggle()
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-.previewInterfaceOrientation(.portrait)
+        ContentView()
+            .preferredColorScheme(.dark)
     }
 }
